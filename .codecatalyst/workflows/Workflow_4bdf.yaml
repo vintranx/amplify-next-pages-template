@@ -1,0 +1,44 @@
+Name: Workflow_4bdf
+SchemaVersion: "1.0"
+
+# Optional - Set automatic triggers.
+Triggers:
+  - Type: PUSH
+    Branches:
+      - main
+Actions:
+  Build_48:
+    # Identifies the action. Do not modify this value.
+    Identifier: aws/build@v1.0.0
+    # Specifies the source and/or artifacts to pass to the action as input.
+    Inputs:
+      # Optional
+      Sources:
+        - WorkflowSource # This specifies that the action requires this Workflow as a source
+      Variables:
+        - Name: AWS_APP_ID_STAGING
+          Value: IDstaging
+        - Name: AWS_APP_ID_PRODUCTION
+          Value: IDProduction
+        - Name: AWS_BRANCH
+          Value: main
+    Outputs:
+      # Optional; Automatically discover reports for popular test frameworks
+      AutoDiscoverReports:
+        Enabled: true
+        # Use as prefix for the report files
+        ReportNamePrefix: rpt
+    # Defines the action's properties.
+    Configuration:
+      # Required - Steps are sequential instructions that run shell commands
+      Steps:
+        - Run: echo "Hello, World!"
+        - Run: echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" >> report.xml
+        - Run: echo "<testsuite tests=\"1\" name=\"TestAgentJunit\" >" >> report.xml
+        - Run: echo "<testcase classname=\"TestAgentJunit\" name=\"Dummy
+            Test\"/></testsuite>" >> report.xml
+      Container:
+        Registry: CODECATALYST
+        Image: CodeCatalystLinux_x86_64:2024_03
+    Compute:
+      Type: EC2
