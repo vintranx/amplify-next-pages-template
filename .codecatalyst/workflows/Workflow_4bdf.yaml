@@ -60,11 +60,12 @@ Actions:
     Configuration:
       # Required - Steps are sequential instructions that run shell commands
       Steps:
-        - Run: echo "Hello, World!"
-        - Run: echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" >> report.xml
-        - Run: echo "<testsuite tests=\"1\" name=\"TestAgentJunit\" >" >> report.xml
-        - Run: echo "<testcase classname=\"TestAgentJunit\" name=\"Dummy
-            Test\"/></testsuite>" >> report.xml
+        - Run: export CI=1
+        - Run: npm ci
+        - Run: npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+        - Run: if [ $AWS_BRANCH = "main" ]; then curl -X POST -d {}
+            "`webhookUrl`&operation=startbuild" -H
+            "Content-Type:application/json"; fi
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
